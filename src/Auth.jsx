@@ -28,18 +28,18 @@ export default function Auth() {
 
   return (
     <div className="h-full flex items-center justify-center">
-      <div class="max-w-screen-md p-6">
-        <div class="bg-white dark:bg-gray-900 shadow-lg rounded-lg overflow-hidden grid grid-cols-1 sm:grid-cols-2">
+      <div className="max-w-screen-md p-6">
+        <div className="bg-white dark:bg-gray-900 shadow-lg rounded-lg overflow-hidden grid grid-cols-1 sm:grid-cols-2">
           <div
-            class="w-full flex flex-col gap-6 bg-cover bg-center bg-no-repeat"
+            className="w-full flex flex-col gap-6 bg-cover bg-center bg-no-repeat"
             style={{
               backgroundImage:
                 "url(" +
                 `https://blog.kotsovolos.gr/wp-content/uploads/2021/12/mouse.png` +
                 ")",
             }}></div>
-          <div class="p-12 flex flex-col gap-6">
-            <div class="text-3xl dark:text-white font-bold sm:text-4xl">
+          <div className="p-12 flex flex-col gap-6">
+            <div className="text-3xl dark:text-white font-bold sm:text-4xl">
               We're just trying to play some games!
             </div>
             <div className="text-sm dark:text-gray-400">

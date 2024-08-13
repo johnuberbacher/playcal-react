@@ -4,24 +4,18 @@ import { supabase } from "../../lib/supabaseClient";
 
 const ModalAddEvent = ({ username, userlabel, selectedDateTimestamp, onClickCancel }) => {
   const [eventName, setEventName] = useState("");
+  const [eventDate, setEventDate] = useState(new Date(Date.now() + 60 * 60 * 1000).toISOString().slice(0, 16));
   const [eventDescription, setEventDescription] = useState("");
-  const [selectedHour, setSelectedHour] = useState("4"); // Default hour
-  const [selectedMinute, setSelectedMinute] = useState("30"); // Default minute
-  const [selectedAmPm, setSelectedAmPm] = useState("PM"); // Default AM/PM
   const [repeatWeekly, setRepeatWeekly] = useState(false);
   const [publicEvent, setPublicEvent] = useState(true);
   const [isNameValid, setIsNameValid] = useState(false);
 
   useEffect(() => {
-    setIsNameValid(eventName.length >= 4);
+    setIsNameValid(eventName.length >= 1);
   }, [eventName]);
 
   const handleCreateNewEvent = async (e) => {
     // e.preventDefault();
-
-    const timeString = `${selectedHour}:${selectedMinute} ${selectedAmPm}`;
-    const dateTimeString = `${new Date(selectedDateTimestamp).toLocaleDateString()} ${timeString}`;
-    const startDate = new Date(dateTimeString);
 
     try {
       const { error } = await supabase
@@ -32,8 +26,8 @@ const ModalAddEvent = ({ username, userlabel, selectedDateTimestamp, onClickCanc
             description: eventDescription,
             creator: username,
             creator_label: userlabel,
-            start: startDate,
-            end: new Date(startDate.getTime() + 60 * 60 * 1000),
+            start: eventDate,
+            end: eventDate,
             repeat_weekly: repeatWeekly,
             public_event: publicEvent
           },
@@ -65,7 +59,7 @@ const ModalAddEvent = ({ username, userlabel, selectedDateTimestamp, onClickCanc
         <div className="px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
           <form>
             <div className="text-base font-semibold leading-7 text-gray-900 dark:text-white">
-              Add New Event on <span class="text-indigo-600 dark:text-indigo-500">{new Date(selectedDateTimestamp).toDateString()}</span>
+              Add New Event
             </div>
             <div className="mt-1 text-sm leading-6 text-gray-600 dark:text-gray-400">
               Please be mindful of what you share, as this information may be
@@ -85,9 +79,8 @@ const ModalAddEvent = ({ username, userlabel, selectedDateTimestamp, onClickCanc
                     id="event-name"
                     name="event-name"
                     placeholder="Enter the name of the game or activity"
-                    className={`block w-full rounded-md border-0 py-1.5 px-2.5 text-sm text-gray-900 dark:text-white shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 sm:text-sm sm:leading-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 ${
-                      !isNameValid ? "border border-red-500" : ""
-                    }`}
+                    className={`block w-full rounded-md border-0 py-1.5 px-2.5 text-sm text-gray-900 dark:text-white shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 sm:text-sm sm:leading-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 ${!isNameValid ? "border border-red-500" : ""
+                      }`}
                     value={eventName}
                     onChange={(e) => setEventName(e.target.value)}
                   />
@@ -95,53 +88,20 @@ const ModalAddEvent = ({ username, userlabel, selectedDateTimestamp, onClickCanc
               </div>
 
               <div className="col-span-full flex flex-row">
-                <div>
+                <div className="w-full ">
                   <label className="block text-sm font-medium leading-6 text-gray-900 dark:text-white">
-                    Start time:
+                    Event Date:
                   </label>
-                  <div className="cursor-default select-none inline-flex w-auto rounded-md border-0 text-sm text-gray-900 dark:text-white shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 sm:text-sm sm:leading-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-                    <select
-                      defaultValue="4"
-                      name=""
-                      id=""
-                      onChange={(e) => setSelectedHour(e.target.value)}
-                      className="cursor-pointer py-1.5 w-[36px] text-center outline-none appearance-none bg-transparent flex items-center justify-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 rounded-md">
-                      <option value="1">1</option>
-                      <option value="2">2</option>
-                      <option value="3">3</option>
-                      <option value="4">4</option>
-                      <option value="5">5</option>
-                      <option value="6">6</option>
-                      <option value="7">7</option>
-                      <option value="8">8</option>
-                      <option value="9">9</option>
-                      <option value="10">10</option>
-                      <option value="11">11</option>
-                      <option value="12">12</option>
-                    </select>
-                    <span className="px-1 flex items-center justify-center">
-                      :
-                    </span>
-                    <select
-                      defaultValue="30"
-                      name=""
-                      id=""
-                      onChange={(e) => setSelectedMinute(e.target.value)}
-                      className="cursor-pointer py-1.5 w-[36px] text-center outline-none appearance-none bg-transparent flex items-center justify-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 rounded-md">
-                      <option value="00">00</option>
-                      <option value="15">15</option>
-                      <option value="30">30</option>
-                      <option value="45">45</option>
-                    </select>
-                    <select
-                      defaultValue="PM"
-                      name=""
-                      id=""
-                      onChange={(e) => setSelectedAmPm(e.target.value)}
-                      className="cursor-pointer py-1.5 pr-3 pl-1.5 outline-none appearance-none bg-transparent flex items-center justify-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 rounded-md">
-                      <option value="AM">AM</option>
-                      <option value="PM">PM</option>
-                    </select>
+                  <div className="w-full mt-1 cursor-pointer">
+                    <input
+                      type="datetime-local"
+                      id="event-date"
+                      name="trip-start"
+                      value={eventDate}
+                      onChange={(e) => setEventDate(e.target.value)}
+                      min={ new Date(Date.now() + 60 * 60 * 1000).toISOString().slice(0, 16) }
+                      className="cursor-pointer block w-full rounded-md border-0 py-1.5 px-2.5 text-sm text-gray-900 dark:text-white shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 sm:text-sm sm:leading-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                    />
                   </div>
                 </div>
               </div>
@@ -152,18 +112,19 @@ const ModalAddEvent = ({ username, userlabel, selectedDateTimestamp, onClickCanc
                 </label>
                 <div className="relative mt-1 block w-full rounded-md border-0 text-sm text-gray-900 dark:text-white shadow-sm placeholder:text-gray-400 sm:text-sm sm:leading-6">
                   <select
-                    defaultValue="steam"
-                    class="cursor-pointer appearance-none rounded-md w-full py-1.5 px-2.5 ring-1 ring-inset ring-gray-300 bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                    defaultValue="discord"
+                    className="cursor-pointer appearance-none rounded-md w-full py-1.5 px-2.5 ring-1 ring-inset ring-gray-300 bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                    <option value="discord">Discord</option>
                     <option value="steam">Steam</option>
+                    <option value="xbox">Xbox</option>
                     <option value="switch">Nintendo Switch</option>
                     <option value="ps5">Playstation</option>
-                    <option value="xbox">Xbox Series</option>
                     <option value="website">Web</option>
-                    <option value="other">Other</option>
+                    <option value="other">other</option>
                   </select>
-                  <div class="pointer-events-none absolute right-0 top-0 bottom-0 flex items-center px-2 text-gray-700 border-l">
+                  <div className="pointer-events-none absolute right-0 top-0 bottom-0 flex items-center px-2 text-gray-700 border-l">
                     <svg
-                      class="h-4 w-4"
+                      className="h-4 w-4"
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 20 20">
                       <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
@@ -232,7 +193,7 @@ const ModalAddEvent = ({ username, userlabel, selectedDateTimestamp, onClickCanc
                     </svg>
                   </div>
                   <div className="block text-sm font-medium leading-6 text-gray-900 dark:text-white">
-                    Anyone can see and join this event
+                    This is a public event, anyone can see and join this event
                   </div>
                 </label>
               </div>
